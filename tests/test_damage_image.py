@@ -48,9 +48,9 @@ class TestDamageImage:
                                            self.image_size[1]))
 
         assert (0 <= missing_part_start_point[0] <= missing_part_end_point[
-            0] <= self.image_size[0] - 1)
+            0] <= self.image_size[1] - 1)
         assert (0 <= missing_part_start_point[1] <= missing_part_end_point[
-            1] <= self.image_size[1] - 1)
+            1] <= self.image_size[0] - 1)
 
     def test_mask_image_shape(self):
         _, _, mask_image = damage_image.create_mask_image(self.image_size[0],
