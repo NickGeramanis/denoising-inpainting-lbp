@@ -1,8 +1,8 @@
 import logging
 import math
+import os
 import sys
 import time
-import os
 from typing import List, Tuple
 
 import cv2 as cv
@@ -15,7 +15,7 @@ N_ARGS_EXPECTED = 5
 logger = logging.getLogger(__name__)
 log_formatter = logging.Formatter(
     '%(asctime)s %(name)s %(levelname)s %(message)s')
-logger_path = os.path.dirname(__file__) + '/logs/lbp_info.log'
+logger_path = os.path.dirname(os.path.dirname(__file__)) + '/logs/lbp_info.log'
 file_handler = logging.FileHandler(logger_path)
 file_handler.setFormatter(log_formatter)
 logger.addHandler(file_handler)

@@ -4,7 +4,7 @@ import cv2 as cv
 import numpy as np
 import pytest
 
-import damage_image
+from src import damage_image
 
 
 class TestDamageImage:
