@@ -2,3 +2,4 @@
 venv/
 tests/.pytest_cache
 .idea/
+.coverage
