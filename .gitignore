@@ -2,4 +2,9 @@
 venv/
 tests/.pytest_cache
 .idea/
+*.log
 .coverage
+coverage-reports/
+*.png
+!images/house-damaged.png
+!images/house-labeled.png
