@@ -1,4 +1,5 @@
 import math
+import os
 
 import cv2 as cv
 import numpy as np
@@ -19,8 +20,11 @@ class TestDensoisingInpainting:
             denoising_inpainting.main(args)
 
     def test_calculate_energy(self):
-        observed_image = cv.imread('house-damaged.png', cv.IMREAD_GRAYSCALE)
-        mask_image = cv.imread('house-mask.png', cv.IMREAD_GRAYSCALE)
+        path = os.path.dirname(__file__)
+        print(path)
+        observed_image = cv.imread(path + '/house-damaged.png',
+                                   cv.IMREAD_GRAYSCALE)
+        mask_image = cv.imread(path + '/house-mask.png', cv.IMREAD_GRAYSCALE)
         labeled_image = np.copy(observed_image)
         lambda_value = 5
         maximum_smoothness_penalty = math.inf
