@@ -1,6 +1,6 @@
 **/__pycache__
 venv/
-tests/.pytest_cache
+**/.pytest_cache
 .idea/
 *.log
 .coverage
