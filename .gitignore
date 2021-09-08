@@ -10,3 +10,5 @@ coverage-reports/
 !images/boat-damaged.png
 !images/house-damaged.png
 !images/house-labeled.png
+!tests/house-damaged.png
+!tests/house-mask.png
