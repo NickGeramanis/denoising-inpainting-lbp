@@ -42,8 +42,8 @@ The following libraries need to be installed:
 
 ## Usage
 
-To create a damaged image, execute the script `damage_image.py` with the
-following parameters:
+To create a damaged image (and its mask), execute the script `damage_image.py`
+with the following parameters:
 
 image_name, gaussian_noise_mean_value, gaussian_noise_variance
 
@@ -53,11 +53,17 @@ for example:
 python3 damage_image.py boat.png 0 0.1
 ```
 
+![Image of a boat](/images/boat.png)
+
+![Produced damaged image](/images/boat-damaged.png)
+
 To perform denoising and inpainting on an image, execute the
 script `denoising_inpainting.py` with the following parameters:
 
 image_name, number_of_iterations, lambda, maximum_smoothness_penalty,
 energy_lower_bound
+
+Note that the mask image must also be in the given path
 
 If the smoothness cost function is not truncated, provide inf as
 maximum_smoothness_penalty.

@@ -6,5 +6,7 @@ tests/.pytest_cache
 .coverage
 coverage-reports/
 *.png
+!images/boat.png
+!images/boat-damaged.png
 !images/house-damaged.png
 !images/house-labeled.png
