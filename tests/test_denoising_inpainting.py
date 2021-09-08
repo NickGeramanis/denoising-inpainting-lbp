@@ -5,7 +5,7 @@ import cv2 as cv
 import numpy as np
 import pytest
 
-from src import denoising_inpainting
+from denoising_inpainting_lbp import denoising_inpainting
 
 
 class TestDensoisingInpainting:

@@ -4,7 +4,7 @@ import cv2 as cv
 import numpy as np
 import pytest
 
-from src import damage_image
+from denoising_inpainting_lbp import damage_image
 
 
 class TestDamageImage:
