@@ -3,70 +3,7 @@
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <title>Denoising & Inpainting using Loopy Belief Propagation</title>
-    <style>
-      body {
-        font-family: Arial, sans-serif;
-      }
-      .sidenav {
-        height: 100%;
-        width: 300px;
-        position: fixed;
-        z-index: 1;
-        top: 0;
-        left: 0;
-        background-color: orangered;
-        overflow: auto;
-      }
-      .sidenav a {
-        padding: 8px;
-        text-decoration: none;
-        font-size: 20px;
-        font-weight: bold;
-        color: white;
-        display: block;
-        margin: 16px;
-      }
-      .sidenav a:hover {
-        color: black;
-        background: white;
-      }
-      .main {
-        margin: 16px 16px 16px 350px;
-      }
-      .main h1 {
-        font-size: 40px;
-      }
-      .main h2 {
-        font-size: 22px;
-      }
-      .main h3 {
-        font-size: 32px;
-        color: orangered;
-      }
-      .main h4 {
-        font-size: 20px;
-      }
-      .main p {
-        font-size: 18px;
-      }
-      .main a {
-        font-size: 18px;
-      }
-      .main ul {
-        font-size: 18px;
-      }
-      .main img {
-        font-size: 18px;
-      }
-
-
-
-
-
-
-
-
-    </style>
+    <link href="style.css" rel="stylesheet">
 </head>
 
 <body>
@@ -80,11 +17,8 @@
 <div class="main">
     <h1 id="home">Denoising & Inpainting using Loopy Belief Propagation</h1>
     <a href="https://github.com/NickGeramanis/denoising-inpainting-lbp">
-        <img
-                src="images/github.png"
-                alt="GitHub image"
-                style="width: 15%; height: 15%"
-        />
+        <img alt="GitHub image" src="images/github.png"
+             style="width: 15%; height: 15%"/>
     </a>
     <h2>
         This project provides an implementation of the loopy belief propagation
@@ -93,24 +27,32 @@
     <h3 id="description">Description</h3>
     <p>This project contains 2 scripts:</p>
     <p>
-        "damage_image.py": Add Gaussian noise to an image and destroy a portion
+        <file>damage_image.py</file>
+        : Add Gaussian noise to an image and destroy a portion
         of it.
     </p>
     <p>
-        "denoising_inpainting.py": Denoise and inpaint an image using the LBP
+        <file>denoising_inpainting.py</file>
+        : Denoise and inpaint an image using the LBP
         algorithm. The current implementation can take many hours for a high
         number of iterations or high resolution images.
     </p>
     <p>The algorithm is based on the following paper:</p>
     <p>
-        Szeliski, R., Zabih, R., Scharstein, D., Veksler, O., Kolmogorov, V.,
-        Agarwala, A., Tappen, M., and Rother, C. (2008). A comparative study of
-        energy minimization methods for Markov random fields with
-        smoothness-based priors. IEEE Transactions on Pattern Analysis and
-        Machine Intelligence.
+        <a href="https://ieeexplore.ieee.org/document/4420084">Szeliski, R.,
+            Zabih, R., Scharstein, D., Veksler, O., Kolmogorov, V.,
+            Agarwala, A., Tappen, M., and Rother, C. (2008). A comparative
+            study of
+            energy minimization methods for Markov random fields with
+            smoothness-based priors. IEEE Transactions on Pattern Analysis and
+            Machine Intelligence.</a>
     </p>
     <h3 id="gettingStarted">Getting Started</h3>
     <h4>Prerequisites</h4>
+    <p>
+        The scripts ware implemented and tested with Python 3.8 but previous
+        versions can also be used.
+    </p>
     <p>The following libraries need to be installed:</p>
     <ul>
         <li>NumPy</li>
@@ -119,49 +61,57 @@
     </ul>
     <h3 id="usage">Usage</h3>
     <p>
-        To create a damaged image, execute the script "damage_image.py" with
-        the
-        following parameters:
+        To create a damaged image, execute the script
+        <file>damage_image.py</file>
+        with the following parameters:
     </p>
-    <p>image_name, gaussian_noise_mean_value, gaussian_noise_variance</p>
-    <p>for example</p>
-    <p>python3 damage_image.py boat.png 0 0.1</p>
+    <p>image_path_name, gaussian_noise_mean_value, gaussian_noise_variance</p>
+    <p>for example:</p>
+    <code>python3 damage_image.py boat.png 0 0.1</code>
+    <p>
+        Note that a mask image will also be produced that indicates which
+        pixels have been damaged.
+    </p>
     <img src="images/boat.png" alt="Image of a boat"/>
-    <img src="images/boat-damaged.png" alt="Produced damaged image"/>
+    <img alt="Damaged image" src="images/boat-damaged.png"/>
     <p>
-        To perform denoising and inpainting on an image, execute the script
-        "denoising_inpainting.py" with the following parameters:
+        To perform denoising and inpainting on an image using the lbp
+        algorithm, execute the script
+        <file>denoising_inpainting.py</file>
+        with the following parameters:
     </p>
     <p>
-        image_name, number_of_iterations, lambda, maximum_smoothness_penalty,
+        image_path_name, number_of_iterations, lambda,
+        maximum_smoothness_penalty,
         energy_lower_bound
     </p>
-    <p>Note that the mask image must also be in the given path</p>
+    <p>Note that the mask image must also be in the given path.</p>
     <p>
         If the smoothness cost function is not truncated, provide inf as
         maximum_smoothness_penalty.
     </p>
     <p>If energy_lower_bound is not known provide 1.</p>
     <p>for example:</p>
-    <p>python3 denoising_inpainting.py house.png 5 5 inf 37580519.6</p>
+    <code>python3 denoising_inpainting.py house.png 5 5 inf 37580519.6</code>
     <img src="images/house-damaged.png" alt="Damaged image of a house"/>
     <img src="images/house-labeled.png" alt="Image after LBP"/>
     <p>
-        Furthermore, some unit tests have been implemented in folder "tests" to
-        verify the proper functioning of the code.
+        Furthermore, some unit tests have been implemented in folder
+        <file>tests</file>
+        to verify the proper functioning of the code.
     </p>
     <h3 id="about">About</h3>
     <h4>Status</h4>
     <p>Under maintenance.</p>
     <h4>License</h4>
     <p>
-        Distributed under the GPL-3.0 License. See "LICENSE" for more
+        Distributed under the GPL-3.0 License. See
+        <file>LICENSE</file>
+        for more
         information.
     </p>
     <h4>Authors</h4>
-    <a href="https://www.linkedin.com/in/nikolaos-geramanis"
-    >Nick Geramanis</a
-    >
+    <a href="https://www.linkedin.com/in/nikolaos-geramanis">Nick Geramanis</a>
 </div>
 </body>
 </html>
