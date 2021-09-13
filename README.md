@@ -60,8 +60,6 @@ been damaged.
 
 ![Damaged image](/images/boat-damaged.png)
 
-![Mamaged image](/images/boat-mask.png)
-
 To perform denoising and inpainting on an image using the lbp algorithm,
 execute the script `denoising_inpainting.py` with the following parameters:
 

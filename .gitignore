@@ -8,7 +8,6 @@ coverage-reports/
 *.png
 !images/boat.png
 !images/boat-damaged.png
-!images/boat-mask.png
 !images/house-damaged.png
 !images/house-labeled.png
 !tests/house-damaged.png
