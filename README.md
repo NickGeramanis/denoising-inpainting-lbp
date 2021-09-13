@@ -47,7 +47,7 @@ with the following parameters:
 
 image_path_name, gaussian_noise_mean_value, gaussian_noise_variance
 
-for example:
+For example:
 
 ```bash
 python3 damage_image.py boat.png 0 0.1
@@ -73,7 +73,7 @@ maximum_smoothness_penalty.
 
 If energy_lower_bound is not known provide 1.
 
-for example:
+For example:
 
 ```bash
 python3 denoising_inpainting.py house.png 5 5 inf 37580519.6
