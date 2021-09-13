@@ -25,14 +25,14 @@ iterations or high resolution images.
 
 The algorithm is based on the following paper:
 
-Szeliski, R., Zabih, R., Scharstein, D., Veksler, O., Kolmogorov, V., Agarwala,
-A., Tappen, M., and Rother, C. (2008). A comparative study of energy
-minimization methods for Markov random fields with smoothness-based priors.
-IEEE Transactions on Pattern Analysis and Machine Intelligence.
+[Szeliski, R., Zabih, R., Scharstein, D., Veksler, O., Kolmogorov, V., Agarwala, A., Tappen, M., and Rother, C. (2008). A comparative study of energy minimization methods for Markov random fields with smoothness-based priors. IEEE Transactions on Pattern Analysis and Machine Intelligence.](https://ieeexplore.ieee.org/document/4420084)
 
 ## Getting Started
 
 ### Prerequisites
+
+The scripts ware implemented and tested with Python 3.8 but previous versions
+can also be used.
 
 The following libraries need to be installed:
 
@@ -45,7 +45,7 @@ The following libraries need to be installed:
 To create a damaged image (and its mask), execute the script `damage_image.py`
 with the following parameters:
 
-image_name, gaussian_noise_mean_value, gaussian_noise_variance
+image_path_name, gaussian_noise_mean_value, gaussian_noise_variance
 
 for example:
 
@@ -53,17 +53,22 @@ for example:
 python3 damage_image.py boat.png 0 0.1
 ```
 
+Note that a mask image will also be produced that indicates which pixels have
+been damaged.
+
 ![Image of a boat](/images/boat.png)
 
-![Produced damaged image](/images/boat-damaged.png)
+![Damaged image](/images/boat-damaged.png)
 
-To perform denoising and inpainting on an image, execute the
-script `denoising_inpainting.py` with the following parameters:
+![Mamaged image](/images/boat-mask.png)
 
-image_name, number_of_iterations, lambda, maximum_smoothness_penalty,
+To perform denoising and inpainting on an image using the lbp algorithm,
+execute the script `denoising_inpainting.py` with the following parameters:
+
+image_path_name, number_of_iterations, lambda, maximum_smoothness_penalty,
 energy_lower_bound
 
-Note that the mask image must also be in the given path
+Note that the mask image must also be in the given path.
 
 If the smoothness cost function is not truncated, provide inf as
 maximum_smoothness_penalty.
@@ -94,4 +99,3 @@ Distributed under the GPL-3.0 License. See `LICENSE` for more information.
 ## Authors
 
 [Nick Geramanis](https://www.linkedin.com/in/nikolaos-geramanis)
-
