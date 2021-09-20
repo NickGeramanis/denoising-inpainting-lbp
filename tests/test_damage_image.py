@@ -47,10 +47,10 @@ class TestDamageImage:
             damage_image.create_mask_image(self.image_size[0],
                                            self.image_size[1]))
 
-        assert (0 <= missing_part_start_point[0] <= missing_part_end_point[
-            0] <= self.image_size[1] - 1)
-        assert (0 <= missing_part_start_point[1] <= missing_part_end_point[
-            1] <= self.image_size[0] - 1)
+        assert (0 <= missing_part_start_point[0]
+                <= missing_part_end_point[0] <= self.image_size[1] - 1)
+        assert (0 <= missing_part_start_point[1]
+                <= missing_part_end_point[1] <= self.image_size[0] - 1)
 
     def test_mask_image_shape(self):
         _, _, mask_image = damage_image.create_mask_image(self.image_size[0],
@@ -65,10 +65,11 @@ class TestDamageImage:
 
         for row_i in range(self.image_size[0]):
             for col_i in range(self.image_size[1]):
-                if (missing_part_start_point[1] <= row_i <=
-                    missing_part_end_point[1]) and (
-                        missing_part_start_point[0] <= col_i <=
-                        missing_part_end_point[0]):
+                row_in_missing_par = (missing_part_start_point[1] <= row_i
+                                      <= missing_part_end_point[1])
+                col_in_missing_par = (missing_part_start_point[0] <= col_i
+                                      <= missing_part_end_point[0])
+                if row_in_missing_par and col_in_missing_par:
                     assert mask_image[row_i][col_i] == damage_image.BLACK_VALUE
                 else:
                     assert mask_image[row_i][col_i] == damage_image.WHITE_VALUE

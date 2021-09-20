@@ -117,13 +117,13 @@ def min_sum(observed_image: np.ndarray, mask_image: np.ndarray,
                                                     (label - label2) ** 2))
 
     logger.info('Running Loopy Belief Propagation algorithm(min-sum version) '
-                'for %d iterations...', max_iterations)
+                f'for {max_iterations} iterations...')
 
     starting_time = time.time()
 
     # iteratively update incoming messages for each node
     for iteration in range(max_iterations):
-        logger.info('Iteration %d', iteration)
+        logger.info(f'Iteration {iteration}')
         # pass messages along rows
         for row in range(image_height):
             # forward pass (left to right)
@@ -195,7 +195,7 @@ def min_sum(observed_image: np.ndarray, mask_image: np.ndarray,
                                              mask_image, lambda_value,
                                              max_smoothness_penalty)
         duration[iteration] = time.time() - starting_time
-        logger.info('time %f secs', duration[iteration])
+        logger.info(f'time {duration[iteration]} secs')
 
     return labeled_image, energy, duration
 
@@ -212,7 +212,6 @@ def calculate_energy(observed_image: np.ndarray, labeled_image: np.ndarray,
     #
     # Es = lambda * Sum(min(Vmax, Vpq(lp,lq)))
     # Vpq(lp,lq) = (lp-lq)^2
-
     image_height, image_width = labeled_image.shape
     data_energy = 0
     smoothness_energy = 0
@@ -237,8 +236,8 @@ def calculate_energy(observed_image: np.ndarray, labeled_image: np.ndarray,
 
     energy = data_energy + smoothness_energy
 
-    logger.info('Energy = %d, Data energy = %d, Smoothness energy = %d',
-                energy, data_energy, smoothness_energy)
+    logger.info(f'Energy = {energy}, Data energy = {data_energy},'
+                f'Smoothness energy = {smoothness_energy}')
 
     return energy
 
