@@ -1,10 +1,10 @@
 **/__pycache__
 venv/
 **/.pytest_cache
-.idea/
+**/.mypy_cache
+.vscode/
 *.log
 .coverage
-coverage-reports/
 *.png
 !images/boat.png
 !images/boat-damaged.png
