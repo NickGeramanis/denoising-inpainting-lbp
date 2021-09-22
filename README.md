@@ -74,7 +74,7 @@ If energy_lower_bound is not known provide 1.
 For example:
 
 ```bash
-python3 denoising_inpainting.py house-damaged.png house-labeled 5 5 inf 37580519.6
+python3 denoising_inpainting.py house-damaged.png house-mask.png 5 5 inf 37580519.6
 ```
 
 ![Damaged image of a house](/images/house-damaged.png)
