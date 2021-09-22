@@ -16,21 +16,20 @@ class TestDensoisingInpainting:
 
     def test_image_name(self):
         with pytest.raises(FileNotFoundError):
-            args = ['image.png', 1, 2, 3, 4]
+            args = ['image.png', 'mask.png', 2, 3, 4, 5]
             denoising_inpainting.main(args)
 
     def test_calculate_energy(self):
         path = os.path.dirname(__file__)
-        print(path)
         observed_image = cv.imread(path + '/house-damaged.png',
                                    cv.IMREAD_GRAYSCALE)
         mask_image = cv.imread(path + '/house-mask.png', cv.IMREAD_GRAYSCALE)
         labeled_image = np.copy(observed_image)
-        lambda_value = 5
+        lambda_ = 5
         maximum_smoothness_penalty = math.inf
 
         energy = denoising_inpainting.calculate_energy(
-            observed_image, labeled_image, mask_image, lambda_value,
+            observed_image, labeled_image, mask_image, lambda_,
             maximum_smoothness_penalty)
 
         assert energy == 686805375

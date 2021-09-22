@@ -63,10 +63,8 @@ been damaged.
 To perform denoising and inpainting on an image using the lbp algorithm,
 execute the script `denoising_inpainting.py` with the following parameters:
 
-image_path_name, number_of_iterations, lambda, maximum_smoothness_penalty,
-energy_lower_bound
-
-Note that the mask image must also be in the given path.
+image_path_name, mask_image_path_name, number_of_iterations, lambda,
+maximum_smoothness_penalty, energy_lower_bound
 
 If the smoothness cost function is not truncated, provide inf as
 maximum_smoothness_penalty.
@@ -76,7 +74,7 @@ If energy_lower_bound is not known provide 1.
 For example:
 
 ```bash
-python3 denoising_inpainting.py house.png 5 5 inf 37580519.6
+python3 denoising_inpainting.py house-damaged.png house-labeled 5 5 inf 37580519.6
 ```
 
 ![Damaged image of a house](/images/house-damaged.png)

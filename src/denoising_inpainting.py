@@ -12,7 +12,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 N_LABELS = 256
-N_ARGS_EXPECTED = 5
+N_ARGS_EXPECTED = 6
 
 logger = logging.getLogger(__name__)
 log_formatter = logging.Formatter(
@@ -35,37 +35,28 @@ def main(args: List[str]) -> None:
         raise TypeError('Wrong number of parameters: '
                         f'expected {N_ARGS_EXPECTED}, received {n_args}')
 
-    path = args[0]
-    path_tokens = path.split('.')
-    path_without_extension = path_tokens[0]
-    extension = path_tokens[1]
+    image_path = args[0]
+    mask_image_path = args[1]
 
-    damaged_image_exists = os.path.exists(
-        f'{path_without_extension}-damaged.{extension}')
-    mask_image_exists = os.path.exists(
-        f'{path_without_extension}-mask.{extension}')
-    if not damaged_image_exists or not mask_image_exists:
+    if not os.path.exists(image_path) or not os.path.exists(mask_image_path):
         raise FileNotFoundError('Required images not found')
 
     logger.info('Running loopy belief propagation...')
 
-    observed_image = cv.imread(
-        f'{path_without_extension}-damaged.{extension}',
-        cv.IMREAD_GRAYSCALE)
-    mask_image = cv.imread(f'{path_without_extension}-mask.{extension}',
-                           cv.IMREAD_GRAYSCALE)
+    observed_image = cv.imread(image_path, cv.IMREAD_GRAYSCALE)
+    mask_image = cv.imread(mask_image_path, cv.IMREAD_GRAYSCALE)
 
-    max_iterations = int(args[1])
-    lambda_value = int(args[2])
-    maximum_smoothness_penalty = math.inf if args[3] == 'inf' else int(args[3])
-    energy_lower_bound = float(sys.argv[4])
+    n_iterations = int(args[2])
+    lambda_ = int(args[3])
+    max_smoothness_penalty = math.inf if args[4] == 'inf' else int(args[4])
+    energy_lower_bound = float(sys.argv[5])
 
     labeled_image, energy, duration = min_sum(observed_image, mask_image,
-                                              max_iterations, lambda_value,
-                                              maximum_smoothness_penalty)
+                                              n_iterations, lambda_,
+                                              max_smoothness_penalty)
 
-    cv.imwrite(f'{path_without_extension}-labeled.{extension}',
-               labeled_image)
+    labeled_image_path = image_path.replace('.', '-labeled.')
+    cv.imwrite(labeled_image_path, labeled_image)
 
     plt.plot(duration, energy / energy_lower_bound, 'ro-')
     plt.ylabel('Energy')
@@ -76,25 +67,21 @@ def main(args: List[str]) -> None:
 
 
 def min_sum(observed_image: np.ndarray, mask_image: np.ndarray,
-            max_iterations: int, lambda_value: int,
+            n_iterations: int, lambda_: int,
             max_smoothness_penalty: float) -> \
         Tuple[np.ndarray, np.ndarray, np.ndarray]:
     """Excecute min-sum algorithm (loopy belief propagation)
-    to perfom denoising and inpainting.
+    to perfom denoising and inpainting on an image.
     """
+    starting_energy = calculate_energy(observed_image, observed_image,
+                                       mask_image, lambda_,
+                                       max_smoothness_penalty)
+    logger.info('Starting Energy = %f', starting_energy)
+
     image_height, image_width = observed_image.shape
 
-    energy = np.empty(max_iterations, dtype=np.uint64)
-    duration = np.empty(max_iterations, dtype=np.float64)
-
-    labeled_image = np.copy(observed_image)
-
-    logger.info('Starting Energy')
-    calculate_energy(observed_image, labeled_image, mask_image, lambda_value,
-                     max_smoothness_penalty)
-
-    belief = np.empty((image_height, image_width, N_LABELS),
-                      dtype=np.uint64)
+    energy = np.empty(n_iterations, dtype=np.uint64)
+    duration = np.empty(n_iterations, dtype=np.float64)
 
     # Initialization of the messages,
     incoming_messages_right = np.zeros(
@@ -106,105 +93,133 @@ def min_sum(observed_image: np.ndarray, mask_image: np.ndarray,
     incoming_messages_up = np.zeros(
         (image_height, image_width, N_LABELS), dtype=np.uint64)
 
-    data_cost = np.empty((image_height, image_width, N_LABELS),
-                         dtype=np.uint64)
-    for row in range(image_height):
-        for column in range(image_width):
-            if mask_image[row, column] > 0:
-                data_cost[row, column] = (
-                    (int(observed_image[row, column])
-                     - np.arange(0, N_LABELS)) ** 2)
+    data_cost = init_data_cost(observed_image, mask_image)
 
-    smoothness_cost = np.empty((N_LABELS, N_LABELS),
-                               dtype=np.uint64)
-    for label in range(N_LABELS):
-        for label2 in range(N_LABELS):
-            smoothness_cost[label, label2] = (lambda_value
-                                              * min(max_smoothness_penalty,
-                                                    (label - label2) ** 2))
+    smoothness_cost = init_smoothness_cost(lambda_, max_smoothness_penalty)
 
     logger.info('Running Loopy Belief Propagation algorithm(min-sum version) '
-                'for %d iterations...', max_iterations)
+                'for %d iterations...', n_iterations)
 
     starting_time = time.time()
 
     # iteratively update incoming messages for each node
-    for iteration in range(max_iterations):
+    for iteration in range(n_iterations):
         logger.info('Iteration %d', iteration)
         # pass messages along rows
         for row in range(image_height):
             # forward pass (left to right)
             for column in range(image_width - 1):
                 for label in range(N_LABELS):
-                    outgoing_message_right = (
+                    incoming_messages_left[row, column + 1, label] = np.amin(
                         data_cost[row, column]
                         + smoothness_cost[label, :]
                         + incoming_messages_up[row, column, :]
                         + incoming_messages_down[row, column, :]
                         + incoming_messages_left[row, column, :])
-                    incoming_messages_left[row, column + 1, label] = np.amin(
-                        outgoing_message_right)
 
             # backward pass (right to left)
             for column in range(image_width - 1, 0, -1):
                 for label in range(N_LABELS):
-                    outgoing_message_left = (
+                    incoming_messages_right[row, column - 1, label] = np.amin(
                         data_cost[row, column, :]
                         + smoothness_cost[label, :]
                         + incoming_messages_up[row, column, :]
                         + incoming_messages_down[row, column, :]
                         + incoming_messages_right[row, column, :])
-                    incoming_messages_right[row, column - 1, label] = np.amin(
-                        outgoing_message_left)
 
         # pass messages along columns
         for column in range(image_width):
             # forward pass (top down)
             for row in range(image_height - 1):
                 for label in range(N_LABELS):
-                    outgoing_message_down = (
+                    incoming_messages_up[row + 1, column, label] = np.amin(
                         data_cost[row, column, :]
                         + smoothness_cost[label, :]
                         + incoming_messages_left[row, column, :]
                         + incoming_messages_right[row, column, :]
                         + incoming_messages_up[row, column, :])
-                    incoming_messages_up[row + 1, column, label] = np.amin(
-                        outgoing_message_down)
 
             # backward pass (bottom up)
             for row in range(image_height - 1, 0, -1):
                 for label in range(N_LABELS):
-                    outgoing_message_up = (
+                    incoming_messages_down[row - 1, column, label] = np.amin(
                         data_cost[row, column, :]
                         + smoothness_cost[label, :]
                         + incoming_messages_left[row, column, :]
                         + incoming_messages_right[row, column, :]
                         + incoming_messages_down[row, column, :])
-                    incoming_messages_down[row - 1, column, label] = np.amin(
-                        outgoing_message_up)
 
-        # compute belief
-        for row in range(image_height):
-            for column in range(image_width):
-                belief[row, column, :] = (
-                    data_cost[row, column, :]
-                    + incoming_messages_left[row, column, :]
-                    + incoming_messages_right[row, column, :]
-                    + incoming_messages_up[row, column, :]
-                    + incoming_messages_down[row, column, :])
+        belief = compute_belief(incoming_messages_right,
+                                incoming_messages_left, incoming_messages_down,
+                                incoming_messages_up, data_cost)
 
-        # recover MAP configuration
-        for row in range(image_height):
-            for column in range(image_width):
-                labeled_image[row, column] = np.argmin(belief[row, column])
+        labeled_image = recover_map(belief)
 
         energy[iteration] = calculate_energy(observed_image, labeled_image,
-                                             mask_image, lambda_value,
+                                             mask_image, lambda_,
                                              max_smoothness_penalty)
         duration[iteration] = time.time() - starting_time
-        logger.info('time %f secs', duration[iteration])
+        logger.info('Energy = %f, time = %f secs',
+                    energy[iteration], duration[iteration])
 
     return labeled_image, energy, duration
+
+
+def init_data_cost(observed_image: np.ndarray,
+                   mask_image: np.ndarray) -> np.ndarray:
+    """Initialise the data cost array."""
+    image_height, image_width = observed_image.shape
+    data_cost = np.empty(
+        (image_height, image_width, N_LABELS), dtype=np.uint64)
+    for row in range(image_height):
+        for column in range(image_width):
+            if mask_image[row, column] > 0:
+                data_cost[row, column] = (
+                    (int(observed_image[row, column]) - np.arange(0, N_LABELS))
+                    ** 2)
+    return data_cost
+
+
+def init_smoothness_cost(lambda_value, max_smoothness_penalty):
+    """Initialise the smoothness cost array."""
+    smoothness_cost = np.empty((N_LABELS, N_LABELS), dtype=np.uint64)
+    for label in range(N_LABELS):
+        for label2 in range(N_LABELS):
+            smoothness_cost[label, label2] = (lambda_value
+                                              * min(max_smoothness_penalty,
+                                                    (label - label2) ** 2))
+    return smoothness_cost
+
+
+def compute_belief(incoming_messages_right: np.ndarray,
+                   incoming_messages_left: np.ndarray,
+                   incoming_messages_down: np.ndarray,
+                   incoming_messages_up: np.ndarray,
+                   data_cost: np.ndarray) -> np.ndarray:
+    """Compute belief."""
+    image_height, image_width, _ = data_cost.shape
+    belief = np.empty((image_height, image_width, N_LABELS), dtype=np.uint64)
+    for row in range(image_height):
+        for column in range(image_width):
+            belief[row, column, :] = (
+                data_cost[row, column, :]
+                + incoming_messages_left[row, column, :]
+                + incoming_messages_right[row, column, :]
+                + incoming_messages_up[row, column, :]
+                + incoming_messages_down[row, column, :]
+            )
+    return belief
+
+
+def recover_map(belief: np.ndarray) -> np.ndarray:
+    """recover MAP configuration."""
+    image_height, image_width, _ = belief.shape
+    labeled_image = np.empty((image_height, image_width), dtype=np.uint64)
+    for row in range(image_height):
+        for column in range(image_width):
+            labeled_image[row, column] = np.argmin(belief[row, column])
+
+    return labeled_image
 
 
 def calculate_energy(observed_image: np.ndarray, labeled_image: np.ndarray,
@@ -244,9 +259,6 @@ def calculate_energy(observed_image: np.ndarray, labeled_image: np.ndarray,
     smoothness_energy *= lambda_value
 
     energy = data_energy + smoothness_energy
-
-    logger.info('Energy = %f, Data energy = %f, Smoothness energy = %f',
-                energy, data_energy, smoothness_energy)
 
     return energy
 

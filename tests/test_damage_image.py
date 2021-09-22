@@ -8,8 +8,7 @@ from src import damage_image
 
 
 class TestDamageImage:
-    image_size = (256, 144)
-    image = np.random.randint(256, size=image_size)
+    image = np.random.randint(256, size=(256, 144))
     noise_mean_value = 0
     noise_variance = 0.1
 
@@ -27,7 +26,7 @@ class TestDamageImage:
         noisy_image = damage_image.add_noise(self.image, self.noise_mean_value,
                                              self.noise_variance)
 
-        assert self.image_size == noisy_image.shape
+        assert self.image.shape == noisy_image.shape
 
     def test_noisy_image_pixel_values(self):
         # 99.7% success rate due to random noise (tolerance is 3SD)
@@ -42,34 +41,36 @@ class TestDamageImage:
         assert np.allclose(image_norm, noisy_image_norm,
                            atol=3 * standard_deviation)
 
-    def test_missing_part_points(self):
-        missing_part_start_point, missing_part_end_point, _ = (
-            damage_image.create_mask_image(self.image_size[0],
-                                           self.image_size[1]))
+    def test_calculate_missing_part_points(self):
+        missing_part_points = damage_image.calculate_missing_part_points(
+            self.image.shape)
 
-        assert (0 <= missing_part_start_point[0]
-                <= missing_part_end_point[0] <= self.image_size[1] - 1)
-        assert (0 <= missing_part_start_point[1]
-                <= missing_part_end_point[1] <= self.image_size[0] - 1)
+        assert (0 <= missing_part_points[0][0] <= missing_part_points[1][0]
+                <= self.image.shape[1] - 1)
+        assert (0 <= missing_part_points[0][1] <= missing_part_points[1][1]
+                <= self.image.shape[0] - 1)
 
     def test_mask_image_shape(self):
-        _, _, mask_image = damage_image.create_mask_image(self.image_size[0],
-                                                          self.image_size[1])
+        missing_part_points = damage_image.calculate_missing_part_points(
+            self.image.shape)
+        mask_image = damage_image.create_mask_image(missing_part_points,
+                                                    self.image.shape)
 
-        assert self.image_size == mask_image.shape
+        assert self.image.shape == mask_image.shape
 
     def test_mask_image_pixel_values(self):
-        missing_part_start_point, missing_part_end_point, mask_image = (
-            damage_image.create_mask_image(self.image_size[0],
-                                           self.image_size[1]))
+        missing_part_points = damage_image.calculate_missing_part_points(
+            self.image.shape)
+        mask_image = damage_image.create_mask_image(missing_part_points,
+                                                    self.image.shape)
 
-        for row_i in range(self.image_size[0]):
-            for col_i in range(self.image_size[1]):
-                row_in_missing_par = (missing_part_start_point[1] <= row_i
-                                      <= missing_part_end_point[1])
-                col_in_missing_par = (missing_part_start_point[0] <= col_i
-                                      <= missing_part_end_point[0])
+        for row in range(self.image.shape[0]):
+            for col in range(self.image.shape[1]):
+                row_in_missing_par = (missing_part_points[0][1] <= row
+                                      <= missing_part_points[1][1])
+                col_in_missing_par = (missing_part_points[0][0] <= col
+                                      <= missing_part_points[1][0])
                 if row_in_missing_par and col_in_missing_par:
-                    assert mask_image[row_i][col_i] == damage_image.BLACK_VALUE
+                    assert mask_image[row, col] == damage_image.BLACK_VALUE
                 else:
-                    assert mask_image[row_i][col_i] == damage_image.WHITE_VALUE
+                    assert mask_image[row, col] == damage_image.WHITE_VALUE
