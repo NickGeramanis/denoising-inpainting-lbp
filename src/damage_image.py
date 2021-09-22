@@ -1,3 +1,4 @@
+"""This module is used to damage images."""
 import os
 import random
 import sys
@@ -15,6 +16,7 @@ BLACK_VALUE_BRG = (0, 0, 0)
 
 
 def main(args: List[str]) -> None:
+    """Main function."""
     n_args = len(args)
 
     if n_args != N_ARGS_EXPECTED:
@@ -47,6 +49,7 @@ def main(args: List[str]) -> None:
 
 def damage_image(image: np.ndarray, noise_mean_value: float,
                  noise_variance: float) -> Tuple[np.ndarray, np.ndarray]:
+    """Damage an image (add noise and destroy a portion of it)."""
     noisy_image = add_noise(image, noise_mean_value, noise_variance)
 
     image_height, image_width = image.shape
@@ -62,6 +65,7 @@ def damage_image(image: np.ndarray, noise_mean_value: float,
 def create_mask_image(
         height: int,
         width: int) -> Tuple[Tuple[int, int], Tuple[int, int], np.ndarray]:
+    """Create the mask image (indicates which pixels have been damaged)."""
     missing_part_height = random.randint(
         int(height * IMAGE_PERCENTAGE_TO_DESTROY_LOW),
         int(height * IMAGE_PERCENTAGE_TO_DESTROY_HIGH))
@@ -83,6 +87,7 @@ def create_mask_image(
 
 def add_noise(image: np.ndarray, mean_value: float,
               variance: float) -> np.ndarray:
+    """Add Gaussian noise to an image."""
     image_height, image_width = image.shape
 
     noise = np.random.normal(mean_value, variance, (image_height, image_width))
