@@ -41,23 +41,23 @@ def main(args: List[str]) -> None:
     if not os.path.exists(image_path) or not os.path.exists(mask_image_path):
         raise FileNotFoundError('Required images not found')
 
-    logger.info('Running loopy belief propagation...')
-
     observed_image = cv.imread(image_path, cv.IMREAD_GRAYSCALE)
     mask_image = cv.imread(mask_image_path, cv.IMREAD_GRAYSCALE)
 
     n_iterations = int(args[2])
-    lambda_ = int(args[3])
-    max_smoothness_penalty = math.inf if args[4] == 'inf' else int(args[4])
-    energy_lower_bound = float(sys.argv[5])
+    lambda_ = float(args[3])
+    max_smoothness_penalty = math.inf if args[4] == 'inf' else float(args[4])
+    energy_lower_bound = float(args[5])
 
     labeled_image, energy, duration = min_sum(observed_image, mask_image,
-                                              n_iterations, lambda_,
-                                              max_smoothness_penalty)
+                                              n_iterations,
+                                              max_smoothness_penalty, lambda_)
 
     labeled_image_path = image_path.replace('.', '-labeled.')
     cv.imwrite(labeled_image_path, labeled_image)
-
+    print(energy)
+    print(energy_lower_bound)
+    print(energy / energy_lower_bound)
     plt.plot(duration, energy / energy_lower_bound, 'ro-')
     plt.ylabel('Energy')
     plt.xlabel('Time (s)')
@@ -67,12 +67,14 @@ def main(args: List[str]) -> None:
 
 
 def min_sum(observed_image: np.ndarray, mask_image: np.ndarray,
-            n_iterations: int, lambda_: int,
-            max_smoothness_penalty: float) -> \
-        Tuple[np.ndarray, np.ndarray, np.ndarray]:
+            n_iterations: int, max_smoothness_penalty: float,
+            lambda_: float,) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
     """Excecute min-sum algorithm (loopy belief propagation)
     to perfom denoising and inpainting on an image.
     """
+    logger.info('Running Loopy Belief Propagation algorithm (min-sum version) '
+                'for %d iteration(s)...', n_iterations)
+
     starting_energy = calculate_energy(observed_image, observed_image,
                                        mask_image, lambda_,
                                        max_smoothness_penalty)
@@ -80,8 +82,10 @@ def min_sum(observed_image: np.ndarray, mask_image: np.ndarray,
 
     image_height, image_width = observed_image.shape
 
-    energy = np.empty(n_iterations, dtype=np.uint64)
-    duration = np.empty(n_iterations, dtype=np.float64)
+    energy = np.empty(n_iterations+1, dtype=np.uint64)
+    energy[0] = starting_energy
+    duration = np.empty(n_iterations+1, dtype=np.float64)
+    duration[0] = 0
 
     # Initialization of the messages,
     incoming_messages_right = np.zeros(
@@ -94,16 +98,11 @@ def min_sum(observed_image: np.ndarray, mask_image: np.ndarray,
         (image_height, image_width, N_LABELS), dtype=np.uint64)
 
     data_cost = init_data_cost(observed_image, mask_image)
-
     smoothness_cost = init_smoothness_cost(lambda_, max_smoothness_penalty)
 
-    logger.info('Running Loopy Belief Propagation algorithm(min-sum version) '
-                'for %d iterations...', n_iterations)
-
     starting_time = time.time()
-
     # iteratively update incoming messages for each node
-    for iteration in range(n_iterations):
+    for iteration in range(1, n_iterations + 1):
         logger.info('Iteration %d', iteration)
         # pass messages along rows
         for row in range(image_height):
@@ -180,12 +179,13 @@ def init_data_cost(observed_image: np.ndarray,
     return data_cost
 
 
-def init_smoothness_cost(lambda_value, max_smoothness_penalty):
+def init_smoothness_cost(lambda_: float,
+                         max_smoothness_penalty: float) -> np.ndarray:
     """Initialise the smoothness cost array."""
     smoothness_cost = np.empty((N_LABELS, N_LABELS), dtype=np.uint64)
     for label in range(N_LABELS):
         for label2 in range(N_LABELS):
-            smoothness_cost[label, label2] = (lambda_value
+            smoothness_cost[label, label2] = (lambda_
                                               * min(max_smoothness_penalty,
                                                     (label - label2) ** 2))
     return smoothness_cost
@@ -223,7 +223,7 @@ def recover_map(belief: np.ndarray) -> np.ndarray:
 
 
 def calculate_energy(observed_image: np.ndarray, labeled_image: np.ndarray,
-                     mask_image: np.ndarray, lambda_value: int,
+                     mask_image: np.ndarray, lambda_: float,
                      max_smoothness_penalty: float) -> float:
     """Calculate the energy of an image:
     E = Ep + Es
@@ -256,10 +256,9 @@ def calculate_energy(observed_image: np.ndarray, labeled_image: np.ndarray,
                 smoothness_energy += min(max_smoothness_penalty,
                                          label_difference)
 
-    smoothness_energy *= lambda_value
+    smoothness_energy *= lambda_
 
     energy = data_energy + smoothness_energy
-
     return energy
 
 

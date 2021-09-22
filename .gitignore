@@ -12,3 +12,4 @@ venv/
 !images/house-labeled.png
 !tests/house-damaged.png
 !tests/house-mask.png
+A comparative study of energy minimization methods for Markov random fields with smoothness-based priors.pdf
