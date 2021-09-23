@@ -5,6 +5,7 @@ venv/
 .vscode/
 *.log
 .coverage
+cov.xml
 *.png
 !images/boat.png
 !images/boat-damaged.png
