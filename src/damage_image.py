@@ -1,4 +1,3 @@
-"""This module is used to damage images."""
 import os
 import random
 import sys
@@ -16,7 +15,6 @@ BLACK_VALUE_BRG = (0, 0, 0)
 
 
 def main(args: List[str]) -> None:
-    """Main function."""
     n_args = len(args)
 
     if n_args != N_ARGS_EXPECTED:
@@ -48,7 +46,9 @@ def main(args: List[str]) -> None:
 
 def damage_image(image: np.ndarray, noise_mean_value: float,
                  noise_variance: float) -> Tuple[np.ndarray, np.ndarray]:
-    """Damage an image (add noise and destroy a portion of it)."""
+    """Damage an image
+    by adding Gaussian noise and destroying a portion of it.
+    """
     noisy_image = add_noise(image, noise_mean_value, noise_variance)
 
     missing_part_points = calculate_missing_part_points(image.shape)
@@ -62,7 +62,7 @@ def damage_image(image: np.ndarray, noise_mean_value: float,
 
 def calculate_missing_part_points(
         shape: Tuple[int, ...]) -> Tuple[Tuple[int, int], Tuple[int, int]]:
-    """Create the coordinates of the destroyed portion of the image"""
+    """Create the 4 coordinates of the destroyed portion of the image."""
     missing_part_height = random.randint(
         int(shape[0] * IMAGE_PERCENTAGE_TO_DESTROY_LOW),
         int(shape[0] * IMAGE_PERCENTAGE_TO_DESTROY_HIGH))
@@ -85,7 +85,7 @@ def calculate_missing_part_points(
 def create_mask_image(
         missing_part_points: Tuple[Tuple[int, int], Tuple[int, int]],
         shape: Tuple[int, ...]) -> np.ndarray:
-    """Create the mask image (indicates which pixels have been damaged)."""
+    """Create the mask image which indicates which pixels have been damaged."""
     white_image = np.full(shape, WHITE_VALUE, dtype=np.uint8)
     mask_image = cv.rectangle(white_image, missing_part_points[0],
                               missing_part_points[1], BLACK_VALUE_BRG, -1)

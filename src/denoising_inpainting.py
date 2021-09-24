@@ -1,5 +1,3 @@
-"""This module performs denoising and inpainting on images
-using the Loopy Belief Propagation algorithm."""
 import logging
 import math
 import os
@@ -28,7 +26,6 @@ logger.setLevel(logging.INFO)
 
 
 def main(args: List[str]) -> None:
-    """Main function."""
     n_args = len(args)
 
     if n_args != N_ARGS_EXPECTED:
@@ -69,8 +66,8 @@ def main(args: List[str]) -> None:
 def min_sum(observed_image: np.ndarray, mask_image: np.ndarray,
             n_iterations: int, max_smoothness_penalty: float,
             lambda_: float,) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
-    """Excecute min-sum algorithm (loopy belief propagation)
-    to perfom denoising and inpainting on an image.
+    """Execute the min-sum algorithm (loopy belief propagation)
+    to perform denoising and inpainting on an image.
     """
     logger.info('Running Loopy Belief Propagation algorithm (min-sum version) '
                 'for %d iteration(s)...', n_iterations)
@@ -212,7 +209,7 @@ def compute_belief(incoming_messages_right: np.ndarray,
 
 
 def recover_map(belief: np.ndarray) -> np.ndarray:
-    """recover MAP configuration."""
+    """Recover MAP configuration."""
     image_height, image_width, _ = belief.shape
     labeled_image = np.empty((image_height, image_width), dtype=np.uint64)
     for row in range(image_height):
@@ -226,12 +223,12 @@ def calculate_energy(observed_image: np.ndarray, labeled_image: np.ndarray,
                      mask_image: np.ndarray, lambda_: float,
                      max_smoothness_penalty: float) -> float:
     """Calculate the energy of an image:
+
     E = Ep + Es
 
     Ep = Sum(Dp(lp))
-
-    Dp(lp) = 0, if lp is damaged
-    Dp(lp)  = (lp-op)^2, else
+    Dp(lp) = 0,         if lp is damaged
+    Dp(lp) = (lp-op)^2, else
 
     Es = lambda * Sum(min(Vmax, Vpq(lp,lq)))
     Vpq(lp,lq) = (lp-lq)^2
