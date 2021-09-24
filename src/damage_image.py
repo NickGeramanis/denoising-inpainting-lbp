@@ -62,7 +62,9 @@ def damage_image(image: np.ndarray, noise_mean_value: float,
 
 def calculate_missing_part_points(
         shape: Tuple[int, ...]) -> Tuple[Tuple[int, int], Tuple[int, int]]:
-    """Create the 4 coordinates of the destroyed portion of the image."""
+    """Create the 4 coordinates
+    of the destroyed portion of the image.
+    """
     missing_part_height = random.randint(
         int(shape[0] * IMAGE_PERCENTAGE_TO_DESTROY_LOW),
         int(shape[0] * IMAGE_PERCENTAGE_TO_DESTROY_HIGH))
@@ -85,7 +87,9 @@ def calculate_missing_part_points(
 def create_mask_image(
         missing_part_points: Tuple[Tuple[int, int], Tuple[int, int]],
         shape: Tuple[int, ...]) -> np.ndarray:
-    """Create the mask image which indicates which pixels have been damaged."""
+    """Create the mask image
+    which indicates which pixels have been damaged.
+    """
     white_image = np.full(shape, WHITE_VALUE, dtype=np.uint8)
     mask_image = cv.rectangle(white_image, missing_part_points[0],
                               missing_part_points[1], BLACK_VALUE_BRG, -1)
