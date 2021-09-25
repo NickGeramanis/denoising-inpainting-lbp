@@ -24,17 +24,17 @@
         />
       </a>
       <h2>
-        This project provides an implementation of the loopy belief propagation
+        This package provides an implementation of the loopy belief propagation
         (LBP) algorithm in denoising and inpainting greyscale images.
       </h2>
       <h3 id="description">Description</h3>
-      <p>This project contains 2 scripts:</p>
+      <p>This package contains 2 modules:</p>
       <p>
-        <quote>damage_image.py</quote>
+        <quote>image_damager</quote>
         : Add Gaussian noise to an image and destroy a portion of it.
       </p>
       <p>
-        <quote>denoising_inpainting.py</quote>
+        <quote>denoising_inpainting</quote>
         : Denoise and inpaint an image using the LBP algorithm. The current
         implementation can take many hours for a high number of iterations or
         high resolution images.
@@ -61,15 +61,29 @@
         <li>OpenCV</li>
         <li>Matplotlib</li>
       </ul>
+      <h4>Installation</h4>
+      <p>
+        Install the package from the repository with the following commands:
+      </p>
+      <code>
+        git clone https://github.com/NickGeramanis/denoising-inpainting-lbp
+        <br />
+        cd denoising-inpainting-lbp <br />
+        pip3 install -e .
+      </code>
       <h3 id="usage">Usage</h3>
       <p>
-        To create a damaged image, execute the script
-        <quote>damage_image.py</quote>
-        with the following parameters:
+        To damage an image, execute the function
+        <quote>damage_image()`</quote> of the
+        <quote>image_damager</quote> module with the following parameters:
       </p>
-      <p>image_path_name, gaussian_noise_mean_value, gaussian_noise_variance</p>
+      <p>image_path, noise_mean_value, noise_variance</p>
       <p>For example:</p>
-      <code>python3 damage_image.py boat.png 0 0.1</code>
+      <code>
+        from denoising_inpainting_lbp import image_damager <br />
+        <br />
+        image_damager.damage_image('path/to/image.png', 0, 0.1)
+      </code>
       <p>
         Note that a mask image will also be produced that indicates which pixels
         have been damaged.
@@ -78,26 +92,27 @@
       <img alt="Damaged image" src="images/boat-damaged.png" />
       <p>
         To perform denoising and inpainting on an image using the lbp algorithm,
-        execute the script
-        <quote>denoising_inpainting.py</quote>
-        with the following parameters:
+        execute the function <quote>denoise_inpaint()</quote> of the
+        <quote>denoising_inpainting</quote> module with the following
+        parameters:
       </p>
       <p>
-        image_path_name, mask_image_path_name, number_of_iterations, lambda,
-        maximum_smoothness_penalty, energy_lower_bound
+        image_path, mask_image_path, n_iterations, lambda, energy_lower_bound,
+        max_smoothness_penalty
       </p>
-      <p>Note that the mask image must also be in the given path.</p>
       <p>
-        If the smoothness cost function is not truncated, provide inf as
-        maximum_smoothness_penalty.
+        If the smoothness cost function is not truncated do not provide
+        max_smoothness_penalty.
       </p>
       <p>If energy_lower_bound is not known provide 1.</p>
       <p>For example:</p>
       <code>
-        python3 denoising_inpainting.py house-damaged.png house-mask.png 5 5 inf
-        37580519.6
+        from denoising_inpainting_lbp import denoising_inpainting <br />
+        <br />
+        denoising_inpainting.denoise_inpaint('path/to/image.png',
+        'path/to/mask.png', 1, 5, 37580519.6)
       </code>
-      <img src="images/house-damaged.png" alt="Damaged image of a house" />
+      <img src="images/house.png" alt="Damaged image of a house" />
       <img src="images/house-labeled.png" alt="Image after LBP" />
       <p>
         Furthermore, some unit tests have been implemented in folder
