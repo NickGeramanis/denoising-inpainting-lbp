@@ -52,9 +52,7 @@ def main(args: List[str]) -> None:
 
     labeled_image_path = image_path.replace('.', '-labeled.')
     cv.imwrite(labeled_image_path, labeled_image)
-    print(energy)
-    print(energy_lower_bound)
-    print(energy / energy_lower_bound)
+
     plt.plot(duration, energy / energy_lower_bound, 'ro-')
     plt.ylabel('Energy')
     plt.xlabel('Time (s)')
