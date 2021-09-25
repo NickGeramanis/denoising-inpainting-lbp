@@ -92,7 +92,7 @@ from denoising_inpainting_lbp import denoising_inpainting
 denoising_inpainting.denoise_inpaint('path/to/image.png', 'path/to/mask.png', 1, 5, 37580519.6)
 ```
 
-![Damaged image of a house](/images/house-damaged.png)
+![Damaged image of a house](/images/house.png)
 
 ![Image after LBP](/images/house-labeled.png)
 
