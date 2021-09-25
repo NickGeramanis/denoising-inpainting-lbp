@@ -8,6 +8,7 @@ algorithm in denoising and inpainting greyscale images.
 - [Description](#description)
 - [Getting Started](#getting-started)
     - [Prerequisites](#prerequisites)
+    - [Installation](#installation)
 - [Usage](#usage)
 - [Status](#status)
 - [License](#license)
@@ -15,11 +16,11 @@ algorithm in denoising and inpainting greyscale images.
 
 ## Description
 
-This project contains 2 scripts:
+This project contains 2 modules:
 
-`damage_image.py`: Add Gaussian noise to an image and destroy a portion of it.
+`image_damager`: Add Gaussian noise to an image and destroy a portion of it.
 
-`denoising_inpainting.py`: Denoise and inpaint an image using the LBP
+`denoising_inpainting`: Denoise and inpaint an image using the LBP
 algorithm. The current implementation can take many hours for a high number of
 iterations or high resolution images.
 
@@ -39,18 +40,30 @@ The following libraries need to be installed:
 - NumPy
 - OpenCV
 - Matplotlib
+  
+### Installation
+
+Install the package from the repository with the following commands:
+
+```bash
+git clone https://github.com/NickGeramanis/denoising-inpainting-lbp
+cd denoising-inpainting-lbp
+pip3 install -e .
+```
 
 ## Usage
 
-To create a damaged image (and its mask), execute the script `damage_image.py`
-with the following parameters:
+To create a damaged image (and its mask), execute the function `damage_image()`
+of the `image_damager` module with the following parameters:
 
-image_path_name, gaussian_noise_mean_value, gaussian_noise_variance
+image_path, noise_mean_value, noise_variance
 
 For example:
 
-```bash
-python3 damage_image.py boat.png 0 0.1
+```python
+from denoising_inpainting_lbp import image_damager
+
+image_damager.damage_image('path/to/image.png', 0, 0.1)
 ```
 
 Note that a mask image will also be produced that indicates which pixels have
@@ -61,20 +74,22 @@ been damaged.
 ![Damaged image](/images/boat-damaged.png)
 
 To perform denoising and inpainting on an image using the lbp algorithm,
-execute the script `denoising_inpainting.py` with the following parameters:
+execute the function `denoise_inpaint()` of the `denoising_inpainting` module
+ with the following parameters:
 
-image_path_name, mask_image_path_name, number_of_iterations, lambda,
-maximum_smoothness_penalty, energy_lower_bound
+image_path, mask_image_path, n_iterations, lambda,
+energy_lower_bound, max_smoothness_penalty
 
-If the smoothness cost function is not truncated, provide inf as
-maximum_smoothness_penalty.
+If the smoothness cost function is not truncated do not provide it.
 
 If energy_lower_bound is not known provide 1.
 
 For example:
 
-```bash
-python3 denoising_inpainting.py house-damaged.png house-mask.png 5 5 inf 37580519.6
+```python
+from denoising_inpainting_lbp import denoising_inpainting
+
+denoising_inpainting.denoise_inpaint('path/to/image.png', 'path/to/mask.png', 1, 5, 37580519.6)
 ```
 
 ![Damaged image of a house](/images/house-damaged.png)

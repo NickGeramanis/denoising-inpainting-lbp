@@ -24,10 +24,10 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
       - name: Run tests
-        run: coverage run --branch --source=src --omit=**/__init__.py -m pytest
+        run: coverage run --branch --source=denoising_inpainting/ --omit=**/__init__.py -m pytest
       - name: Show coverage report
         run: coverage report
       - name: Run linter
-        run: flake8 src
+        run: flake8 --exclude **/__init__.py --max-complexity 10 denoising_inpainting/ 
       - name: Run type checker
-        run: mypy --ignore-missing-imports src
+        run: mypy --ignore-missing-imports denoising_inpainting/ 

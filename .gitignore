@@ -1,16 +1,13 @@
-**/__pycache__
 venv/
+.vscode/
+**/__pycache__
 **/.pytest_cache
 **/.mypy_cache
-.vscode/
+denoising_inpainting_lbp.egg-info/
 *.log
-.coverage
-cov.xml
 *.png
-!images/boat.png
-!images/boat-damaged.png
-!images/house-damaged.png
-!images/house-labeled.png
-!tests/house-damaged.png
-!tests/house-mask.png
-A comparative study of energy minimization methods for Markov random fields with smoothness-based priors.pdf
+!images/*.png
+coverage/
+docs/
+scripts/
+.coverage
