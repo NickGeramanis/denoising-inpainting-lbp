@@ -1,6 +1,6 @@
 # Denoising & Inpainting using Loopy Belief Propagation
 
-This project provides an implementation of the loopy belief propagation (LBP)
+This package provides an implementation of the loopy belief propagation (LBP)
 algorithm in denoising and inpainting greyscale images.
 
 ## Table of Contents
@@ -16,7 +16,7 @@ algorithm in denoising and inpainting greyscale images.
 
 ## Description
 
-This project contains 2 modules:
+This package contains 2 modules:
 
 `image_damager`: Add Gaussian noise to an image and destroy a portion of it.
 
@@ -53,7 +53,7 @@ pip3 install -e .
 
 ## Usage
 
-To create a damaged image (and its mask), execute the function `damage_image()`
+To damage an image, execute the function `damage_image()`
 of the `image_damager` module with the following parameters:
 
 image_path, noise_mean_value, noise_variance
@@ -77,10 +77,9 @@ To perform denoising and inpainting on an image using the lbp algorithm,
 execute the function `denoise_inpaint()` of the `denoising_inpainting` module
  with the following parameters:
 
-image_path, mask_image_path, n_iterations, lambda,
-energy_lower_bound, max_smoothness_penalty
+image_path, mask_image_path, n_iterations, lambda, energy_lower_bound, max_smoothness_penalty
 
-If the smoothness cost function is not truncated do not provide it.
+If the smoothness cost function is not truncated do not provide max_smoothness_penalty.
 
 If energy_lower_bound is not known provide 1.
 
