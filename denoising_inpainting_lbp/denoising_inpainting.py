@@ -66,7 +66,7 @@ def _loopy_belief_propagation(
         mask_image: np.ndarray,
         n_iterations: int,
         max_smoothness_penalty: float,
-        lambda_: float,) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
+        lambda_: float) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
     """Execute the Loopy Belief Propagation (LBP) algorithm.
 
     We use the min-sum version of the LBP algorithm.
@@ -87,6 +87,8 @@ def _loopy_belief_propagation(
     duration = np.empty(n_iterations + 1, dtype=np.float64)
     energy[0] = starting_energy
     duration[0] = 0
+
+    labeled_image = observed_image.copy()
 
     # Initialization of the messages,
     incoming_messages_right = np.zeros((image_height, image_width, N_LABELS),
@@ -179,8 +181,9 @@ def _init_data_cost(observed_image: np.ndarray,
         for column in range(image_width):
             if mask_image[row, column] > 0:
                 data_cost[row, column] = (
-                    (int(observed_image[row, column]) - np.arange(0, N_LABELS))
-                    ** 2)
+                        (int(observed_image[row, column])
+                         - np.arange(0, N_LABELS))
+                        ** 2)
     return data_cost
 
 
@@ -207,11 +210,11 @@ def _compute_belief(incoming_messages_right: np.ndarray,
     for row in range(image_height):
         for column in range(image_width):
             belief[row, column, :] = (
-                data_cost[row, column, :]
-                + incoming_messages_left[row, column, :]
-                + incoming_messages_right[row, column, :]
-                + incoming_messages_up[row, column, :]
-                + incoming_messages_down[row, column, :])
+                    data_cost[row, column, :]
+                    + incoming_messages_left[row, column, :]
+                    + incoming_messages_right[row, column, :]
+                    + incoming_messages_up[row, column, :]
+                    + incoming_messages_down[row, column, :])
     return belief
 
 

@@ -47,9 +47,13 @@ def test_missing_part_points():
     missing_part_points = image_damager._calculate_missing_part_points(
         image.shape)
 
-    assert (0 <= missing_part_points[0][0] <= missing_part_points[1][0]
+    assert (0
+            <= missing_part_points[0][0]
+            <= missing_part_points[1][0]
             <= image.shape[1] - 1)
-    assert (0 <= missing_part_points[0][1] <= missing_part_points[1][1]
+    assert (0
+            <= missing_part_points[0][1]
+            <= missing_part_points[1][1]
             <= image.shape[0] - 1)
 
 
@@ -70,9 +74,11 @@ def test_mask_image_pixels():
 
     for row in range(image.shape[0]):
         for col in range(image.shape[1]):
-            row_in_missing_part = (missing_part_points[0][1] <= row
+            row_in_missing_part = (missing_part_points[0][1]
+                                   <= row
                                    <= missing_part_points[1][1])
-            col_in_missing_part = (missing_part_points[0][0] <= col
+            col_in_missing_part = (missing_part_points[0][0]
+                                   <= col
                                    <= missing_part_points[1][0])
             if row_in_missing_part and col_in_missing_part:
                 assert mask_image[row, col] == image_damager.BLACK_VALUE
