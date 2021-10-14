@@ -18,8 +18,7 @@ def damage_image(image_path: str,
                  noise_variance: float) -> None:
     """Damage an image.
 
-    This is done by adding Gaussian noise
-    and destroying a portion of it.
+    This is done by adding Gaussian noise and destroying a portion of it.
     """
     if not os.path.exists(image_path):
         raise FileNotFoundError(f'Image {image_path} not found')

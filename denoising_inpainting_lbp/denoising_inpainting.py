@@ -16,7 +16,7 @@ log_formatter = logging.Formatter(
     fmt='%(asctime)s %(levelname)s %(message)s',
     datefmt='%d-%m-%Y %H:%M:%S')
 
-file_handler = logging.FileHandler('lbp_info.log')
+file_handler = logging.FileHandler(f'{__name__}.log')
 file_handler.setFormatter(log_formatter)
 logger.addHandler(file_handler)
 
@@ -33,10 +33,7 @@ def denoise_inpaint(image_path: str,
                     lambda_: float,
                     energy_lower_bound: float,
                     max_smoothness_penalty: float = math.inf) -> None:
-    """Denoise & inpaint a damaged image.
-
-    To achieve this we use the Loopy Belief Propagation algorithm.
-    """
+    """Denoise & inpaint a damaged image using the LBP algorithm."""
     if not os.path.exists(image_path) or not os.path.exists(mask_image_path):
         raise FileNotFoundError('Required images not found')
 
@@ -67,11 +64,8 @@ def _loopy_belief_propagation(
         n_iterations: int,
         max_smoothness_penalty: float,
         lambda_: float) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
-    """Execute the Loopy Belief Propagation (LBP) algorithm.
-
-    We use the min-sum version of the LBP algorithm.
-    """
-    logger.info('Running Loopy Belief Propagation algorithm (min-sum version) '
+    """Execute the Loopy Belief Propagation (LBP) algorithm (min-sum)."""
+    logger.info('Running Loopy Belief Propagation algorithm (min-sum) '
                 'for %d iteration(s)...', n_iterations)
 
     starting_energy = _calculate_energy(observed_image,
@@ -182,8 +176,7 @@ def _init_data_cost(observed_image: np.ndarray,
             if mask_image[row, column] > 0:
                 data_cost[row, column] = (
                         (int(observed_image[row, column])
-                         - np.arange(0, N_LABELS))
-                        ** 2)
+                         - np.arange(0, N_LABELS)) ** 2)
     return data_cost
 
 
@@ -193,9 +186,9 @@ def _init_smoothness_cost(lambda_: float,
     smoothness_cost = np.empty((N_LABELS, N_LABELS), dtype=np.uint64)
     for label in range(N_LABELS):
         for label2 in range(N_LABELS):
-            smoothness_cost[label, label2] = (lambda_
-                                              * min(max_smoothness_penalty,
-                                                    (label - label2) ** 2))
+            smoothness_cost[label, label2] = (
+                    lambda_ * min(max_smoothness_penalty,
+                                  (label - label2) ** 2))
     return smoothness_cost
 
 
@@ -204,22 +197,21 @@ def _compute_belief(incoming_messages_right: np.ndarray,
                     incoming_messages_down: np.ndarray,
                     incoming_messages_up: np.ndarray,
                     data_cost: np.ndarray) -> np.ndarray:
-    """Compute belief."""
+    """Compute belief (probability) array."""
     image_height, image_width, _ = data_cost.shape
     belief = np.empty((image_height, image_width, N_LABELS), dtype=np.uint64)
     for row in range(image_height):
         for column in range(image_width):
-            belief[row, column, :] = (
-                    data_cost[row, column, :]
-                    + incoming_messages_left[row, column, :]
-                    + incoming_messages_right[row, column, :]
-                    + incoming_messages_up[row, column, :]
-                    + incoming_messages_down[row, column, :])
+            belief[row, column, :] = (data_cost[row, column, :]
+                                      + incoming_messages_left[row, column, :]
+                                      + incoming_messages_right[row, column, :]
+                                      + incoming_messages_up[row, column, :]
+                                      + incoming_messages_down[row, column, :])
     return belief
 
 
 def _recover_map(belief: np.ndarray) -> np.ndarray:
-    """Recover MAP configuration."""
+    """Recover minimum a posteriori probability (MAP)."""
     image_height, image_width, _ = belief.shape
     labeled_image = np.empty((image_height, image_width), dtype=np.uint64)
     for row in range(image_height):
