@@ -1,5 +1,3 @@
-import math
-
 import cv2 as cv
 import numpy as np
 import pytest
@@ -37,10 +35,7 @@ def test_noisy_image_pixels():
                                     cv.CV_32F)
     image_norm = cv.normalize(image, None, 0, 1, cv.NORM_MINMAX, cv.CV_32F)
 
-    standard_deviation = math.sqrt(noise_variance)
-    assert np.allclose(image_norm,
-                       noisy_image_norm,
-                       atol=3 * standard_deviation)
+    assert np.allclose(image_norm, noisy_image_norm, atol=0.94868329805)
 
 
 def test_missing_part_points():
