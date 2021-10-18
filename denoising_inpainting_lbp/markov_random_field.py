@@ -29,8 +29,8 @@ class MarkovRandomField:
         self._graph = np.empty(starting_labels.shape, dtype=Node)
         for row in range(height):
             for column in range(width):
-                self._graph[row, column] = Node(self._N_LABELS,
-                                                starting_labels[row, column])
+                self._graph[row, column] = (
+                    Node(starting_labels[row, column], mask[row, column] == 0))
 
         self._smoothness_cost = np.empty((self._N_LABELS, self._N_LABELS),
                                          dtype=np.int64)
