@@ -1,5 +1,5 @@
-import math
 import os
+import sys
 
 import cv2 as cv
 import numpy as np
@@ -13,7 +13,7 @@ def test_calculate_energy():
                                cv.IMREAD_GRAYSCALE)
     mask_image = cv.imread(path + '/house-mask.png', cv.IMREAD_GRAYSCALE)
     lambda_ = 5
-    max_smoothness_penalty = math.inf
+    max_smoothness_penalty = sys.maxsize
     mrf = MarkovRandomField(observed_image.astype(np.int64),
                             mask_image.astype(np.int64),
                             lambda_,
