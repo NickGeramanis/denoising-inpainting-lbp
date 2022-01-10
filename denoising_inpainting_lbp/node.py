@@ -21,6 +21,7 @@ class Node:
         self.incoming_message_down = np.zeros(self._N_LABELS, dtype=np.int64)
         self.data_cost = (np.zeros(self._N_LABELS) if zero_data_cost
                           else (label - np.arange(0, self._N_LABELS)) ** 2)
+        self.data_cost = self.data_cost.astype(np.int64)
         self.label = label
 
     def calculate_belief(self) -> None:

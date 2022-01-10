@@ -77,7 +77,7 @@ def _loopy_belief_propagation(
                             max_smoothness_penalty)
 
     starting_energy = mrf.calculate_energy()
-    logger.info('Starting Energy = %f', starting_energy)
+    logger.info('Starting Energy = %d', starting_energy)
 
     energy = np.empty(n_iterations + 1, dtype=np.int64)
     duration = np.empty(n_iterations + 1, dtype=np.float64)
@@ -94,7 +94,7 @@ def _loopy_belief_propagation(
         energy[iteration] = mrf.calculate_energy()
         duration[iteration] = time.time() - starting_time
 
-        logger.info('Energy = %f, time = %f secs',
+        logger.info('Energy = %d, time = %f secs',
                     energy[iteration], duration[iteration])
 
     return mrf.retrieve_labels(), energy, duration
