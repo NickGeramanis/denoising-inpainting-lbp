@@ -1,3 +1,5 @@
+import os
+
 import cv2 as cv
 import numpy as np
 import pytest
@@ -12,6 +14,16 @@ noise_variance = 0.1
 def test_wrong_image_path():
     with pytest.raises(FileNotFoundError):
         image_damager.damage_image('img.png', noise_mean_value, noise_variance)
+
+
+def test_damaged_mask_images_creation():
+    path = os.path.dirname(__file__)
+    image_damager.damage_image(path + '/boat.png',
+                               noise_mean_value,
+                               noise_variance)
+
+    assert os.path.exists(path + '/boat-damaged.png')
+    assert os.path.exists(path + '/boat-mask.png')
 
 
 def test_noisy_image_shape():

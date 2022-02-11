@@ -77,8 +77,11 @@ def _create_mask_image(
     The mask image indicates which pixels have been damaged.
     """
     white_image = np.full(shape, WHITE_VALUE, dtype=np.uint8)
-    mask_image = cv.rectangle(white_image, missing_part_points[0],
-                              missing_part_points[1], BLACK_VALUE_BRG, -1)
+    mask_image = cv.rectangle(white_image,
+                              missing_part_points[0],
+                              missing_part_points[1],
+                              BLACK_VALUE_BRG,
+                              -1)
 
     return mask_image
 
@@ -90,7 +93,11 @@ def _add_noise(image: np.ndarray,
     noise = np.random.normal(noise_mean_value, noise_variance, image.shape)
     image_norm = cv.normalize(image, None, 0, 1, cv.NORM_MINMAX, cv.CV_32F)
     noisy_image_norm = image_norm + noise
-    noisy_image = cv.normalize(noisy_image_norm, None, BLACK_VALUE,
-                               WHITE_VALUE, cv.NORM_MINMAX, cv.CV_8U)
+    noisy_image = cv.normalize(noisy_image_norm,
+                               None,
+                               BLACK_VALUE,
+                               WHITE_VALUE,
+                               cv.NORM_MINMAX,
+                               cv.CV_8U)
 
     return noisy_image
