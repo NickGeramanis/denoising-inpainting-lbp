@@ -28,6 +28,6 @@ jobs:
       - name: Show coverage report
         run: coverage report
       - name: Run linter
-        run: pylint denoising_inpainting_lbp/ 
+        run: pylint --disable=E1101 denoising_inpainting_lbp/
       - name: Run type checker
         run: mypy --ignore-missing-imports denoising_inpainting_lbp/ 
