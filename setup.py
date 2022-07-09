@@ -9,4 +9,6 @@ setup(name='denoising_inpainting_lbp',
                    'for denoising and inpainting greyscale images'),
       url='https://github.com/NickGeramanis/denoising-inpainting-lbp',
       license='GPLV3',
-      install_requires=['opencv-python', 'numpy', 'matplotlib'])
+      python_requires='==3.10.5',
+      install_requires=['opencv-python==4.6.0.66', 'numpy==1.23.1',
+                        'matplotlib==3.5.2', 'pyqt5==5.15.7'])
