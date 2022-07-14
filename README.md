@@ -32,9 +32,6 @@ The algorithm is based on the following paper:
 
 ### Prerequisites
 
-The scripts ware implemented and tested with Python 3.8 but previous versions
-can also be used.
-
 The following libraries need to be installed:
 
 - NumPy
