@@ -75,8 +75,7 @@ class MarkovRandomField:
                                              label_difference)
 
         smoothness_energy *= self._lambda
-        energy = data_energy + smoothness_energy
-        return energy
+        return data_energy + smoothness_energy
 
     def calculate_messages(self) -> None:
         """Calculate the messages for each node using the min-sum algorithm."""

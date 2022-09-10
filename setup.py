@@ -10,5 +10,7 @@ setup(name='denoising_inpainting_lbp',
       url='https://github.com/NickGeramanis/denoising-inpainting-lbp',
       license='GPLV3',
       python_requires='==3.10.7',
-      install_requires=['opencv-python==4.6.0.66', 'numpy==1.23.3',
-                        'matplotlib==3.5.3', 'pyqt5==5.15.7'])
+      install_requires=['opencv-python==4.6.0.66',
+                        'numpy==1.23.3',
+                        'matplotlib==3.5.3',
+                        'pyqt5==5.15.7'])

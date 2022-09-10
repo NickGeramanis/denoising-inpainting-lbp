@@ -47,6 +47,21 @@ def damage_image(image_path: str,
     print('Done!')
 
 
+def _add_noise(image: np.ndarray,
+               noise_mean_value: float,
+               noise_variance: float) -> np.ndarray:
+    """Add Gaussian noise to an image."""
+    noise = np.random.normal(noise_mean_value, noise_variance, image.shape)
+    image_norm = cv.normalize(image, None, 0, 1, cv.NORM_MINMAX, cv.CV_32F)
+    noisy_image_norm = image_norm + noise
+    return cv.normalize(noisy_image_norm,
+                        None,
+                        BLACK_VALUE,
+                        WHITE_VALUE,
+                        cv.NORM_MINMAX,
+                        cv.CV_8U)
+
+
 def _calculate_missing_part_points(
         shape: Tuple[int, ...]) -> Tuple[Tuple[int, int], Tuple[int, int]]:
     """Create the coordinates of the destroyed portion of the image."""
@@ -64,9 +79,7 @@ def _calculate_missing_part_points(
     missing_part_end_point = (missing_part_start_x + missing_part_width - 1,
                               missing_part_start_y + missing_part_height - 1)
 
-    missing_part_points = (missing_part_start_point, missing_part_end_point)
-
-    return missing_part_points
+    return missing_part_start_point, missing_part_end_point
 
 
 def _create_mask_image(
@@ -77,27 +90,8 @@ def _create_mask_image(
     The mask image indicates which pixels have been damaged.
     """
     white_image = np.full(shape, WHITE_VALUE, dtype=np.uint8)
-    mask_image = cv.rectangle(white_image,
-                              missing_part_points[0],
-                              missing_part_points[1],
-                              BLACK_VALUE_BRG,
-                              -1)
-
-    return mask_image
-
-
-def _add_noise(image: np.ndarray,
-               noise_mean_value: float,
-               noise_variance: float) -> np.ndarray:
-    """Add Gaussian noise to an image."""
-    noise = np.random.normal(noise_mean_value, noise_variance, image.shape)
-    image_norm = cv.normalize(image, None, 0, 1, cv.NORM_MINMAX, cv.CV_32F)
-    noisy_image_norm = image_norm + noise
-    noisy_image = cv.normalize(noisy_image_norm,
-                               None,
-                               BLACK_VALUE,
-                               WHITE_VALUE,
-                               cv.NORM_MINMAX,
-                               cv.CV_8U)
-
-    return noisy_image
+    return cv.rectangle(white_image,
+                        missing_part_points[0],
+                        missing_part_points[1],
+                        BLACK_VALUE_BRG,
+                        -1)
