@@ -37,6 +37,7 @@ The following libraries need to be installed:
 - NumPy
 - OpenCV
 - Matplotlib
+- PyQt5
   
 ### Installation
 
