@@ -5,9 +5,8 @@ venv/
 **/.mypy_cache
 denoising_inpainting_lbp.egg-info/
 *.log
-*.png
-!images/*.png
 coverage/
-docs/
 scripts/
 .coverage
+*.png
+!images/*.png

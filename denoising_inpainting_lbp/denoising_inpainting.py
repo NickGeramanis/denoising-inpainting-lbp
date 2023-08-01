@@ -27,7 +27,7 @@ logger.addHandler(console_handler)
 logger.setLevel(logging.INFO)
 
 
-# pylint: disable=too-many-arguments
+# pylint: disable-next=too-many-arguments
 def denoise_inpaint(image_path: str,
                     mask_image_path: str,
                     n_iterations: int,
@@ -58,8 +58,6 @@ def denoise_inpaint(image_path: str,
 
     logger.info('Done!')
 
-
-# pylint: enable=too-many-arguments
 
 def _loopy_belief_propagation(
         observed_image: np.ndarray,

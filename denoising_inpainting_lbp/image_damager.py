@@ -63,7 +63,7 @@ def _add_noise(image: np.ndarray,
 
 
 def _calculate_missing_part_points(
-        shape: Tuple[int, ...]) -> Tuple[Tuple[int, int], Tuple[int, int]]:
+        shape: Tuple[int, int]) -> Tuple[Tuple[int, int], Tuple[int, int]]:
     """Create the coordinates of the destroyed portion of the image."""
     missing_part_height = random.randint(
         int(shape[0] * IMAGE_PERCENTAGE_TO_DESTROY_LOW),
@@ -84,7 +84,7 @@ def _calculate_missing_part_points(
 
 def _create_mask_image(
         missing_part_points: Tuple[Tuple[int, int], Tuple[int, int]],
-        shape: Tuple[int, ...]) -> np.ndarray:
+        shape: Tuple[int, int]) -> np.ndarray:
     """Create the mask image.
 
     The mask image indicates which pixels have been damaged.

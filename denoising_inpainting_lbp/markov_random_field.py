@@ -34,7 +34,6 @@ class MarkovRandomField:
 
         self._smoothness_cost = np.empty((self._N_LABELS, self._N_LABELS),
                                          dtype=np.int64)
-
         for i in range(self._N_LABELS):
             for j in range(self._N_LABELS):
                 self._smoothness_cost[i, j] = (
