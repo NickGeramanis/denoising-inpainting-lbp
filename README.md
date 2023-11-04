@@ -22,7 +22,7 @@ This package contains 2 modules:
 
 `denoising_inpainting`: Denoise and inpaint an image using the LBP
 algorithm. The current implementation can take many hours for a high number of
-iterations or high resolution images.
+iterations or high-resolution images.
 
 The algorithm is based on the following paper:
 
@@ -71,7 +71,7 @@ been damaged.
 
 ![Damaged image](/images/boat-damaged.png)
 
-To perform denoising and inpainting on an image using the lbp algorithm,
+To perform denoising and inpainting on an image using the LBP algorithm,
 execute the function `denoise_inpaint()` of the `denoising_inpainting` module
  with the following parameters:
 
@@ -93,7 +93,7 @@ denoising_inpainting.denoise_inpaint('path/to/image.png', 'path/to/mask.png', 1,
 
 ![Image after LBP](/images/house-labeled.png)
 
-Furthermore, some unit tests have been implemented in folder `tests` to verify
+Furthermore, some unit tests have been implemented in the folder `tests` to verify
 the proper functioning of the code.
 
 ## Status
