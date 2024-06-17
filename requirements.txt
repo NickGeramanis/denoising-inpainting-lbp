@@ -1,7 +1,7 @@
-opencv-python==4.8.1.78
-numpy==1.26.1
-matplotlib==3.8.1
-pytest==7.4.3
-coverage==7.3.2
-pylint==3.0.2
-mypy==1.6.1
+opencv-python==4.10.0.84
+numpy==2.0.0
+matplotlib==3.9.0
+pytest==8.2.2
+coverage==7.5.3
+pylint==3.2.3
+mypy==1.10.0
