@@ -37,7 +37,7 @@ class MarkovRandomField:
         for i in range(self._N_LABELS):
             for j in range(self._N_LABELS):
                 self._smoothness_cost[i, j] = (
-                        lambda_ * min(max_smoothness_penalty, (i - j) ** 2))
+                    lambda_ * min(max_smoothness_penalty, (i - j) ** 2))
 
     def calculate_energy(self) -> int:
         """Calculate the energy of an image.
@@ -62,14 +62,14 @@ class MarkovRandomField:
 
                 if row < height - 1:
                     label_difference = (
-                            (self._graph[row, column].label
-                             - self._graph[row + 1, column].label) ** 2)
+                        (self._graph[row, column].label
+                         - self._graph[row + 1, column].label) ** 2)
                     smoothness_energy += min(self._max_smoothness_penalty,
                                              label_difference)
                 if column < width - 1:
                     label_difference = (
-                            (self._graph[row, column].label
-                             - self._graph[row, column + 1].label) ** 2)
+                        (self._graph[row, column].label
+                         - self._graph[row, column + 1].label) ** 2)
                     smoothness_energy += min(self._max_smoothness_penalty,
                                              label_difference)
 
