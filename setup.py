@@ -11,5 +11,5 @@ setup(name='denoising_inpainting_lbp',
       license='GPLV3',
       python_requires='==3.12.6',
       install_requires=['opencv-python==4.10.0.84',
-                        'numpy==2.1.1',
+                        'numpy==2.1.2',
                         'matplotlib==3.9.2'])
