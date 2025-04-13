@@ -27,12 +27,12 @@ logger.addHandler(console_handler)
 logger.setLevel(logging.INFO)
 
 
-# pylint: disable-next=too-many-arguments
+# pylint: disable-next=too-many-positional-arguments,too-many-arguments
 def denoise_inpaint(image_path: str,
                     mask_image_path: str,
                     n_iterations: int,
                     lambda_: int,
-                    energy_lower_bound: int,
+                    energy_lower_bound: float,
                     max_smoothness_penalty: int = sys.maxsize) -> None:
     """Denoise & inpaint a damaged image using the LBP algorithm."""
     if not os.path.exists(image_path) or not os.path.exists(mask_image_path):
